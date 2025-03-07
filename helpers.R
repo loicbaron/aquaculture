@@ -32,7 +32,7 @@ raster_area_within_polygons <- function(rst, polygons) {
 
   # Project the raster
   cat("Projecting the raster...\n")
-  r_projected <- project(rst, target_crs)
+  r_projected <- terra::project(rst, target_crs)
 
   # Project the shapefile
   cat("Projecting the shapefile...\n")
@@ -40,7 +40,7 @@ raster_area_within_polygons <- function(rst, polygons) {
 
   # Compute the area of each raster cell in square kilometers
   cat("Calculating the area of each raster cell in square kilometers...\n")
-  cell_areas <- cellSize(r_projected, unit = "km", mask = TRUE)
+  cell_areas <- terra::cellSize(r_projected, unit = "km", mask = TRUE)
 
   # Calculate the area of the raster within each polygon
   areas_within_polygons <- exact_extract(
