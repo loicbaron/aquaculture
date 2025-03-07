@@ -1,3 +1,4 @@
+library("sf")
 library("terra")
 
 src_dir <- "data/LANDSAT_NDWI"
@@ -7,6 +8,9 @@ raster_files <- list.files(
   ignore.case = TRUE,
   full.names = TRUE
 )
+admin_roi <- st_read("data/ADMIN/villages_bgd.gpkg") %>%
+  dplyr::filter(adm2_name == "Khulna")
+
 for (f in raster_files) {
   cat(basename(f))
   land_cover <- terra::rast(f)
@@ -19,4 +23,5 @@ for (f in raster_files) {
   threshold_value <- 0
   binary_raster <- land_cover > threshold_value
   # terra::plot(binary_raster)
+  result <- raster_area_within_polygons(binary_raster, admin_roi)
 }
