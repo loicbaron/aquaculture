@@ -38,3 +38,18 @@ https://code.earthengine.google.com/?accept_repo=users/loicbaron/aquaculture
 Admin vectors and Landcover rasters datasets of the Region of Interest (ROI) must be located in the data folder
 - LANDSAT rasters `data/LANDSAT_NDWI`
 - Admin layer i.e. `data/ADMIN/villages_bgd.gpkg`
+
+
+# -------------------------------------------------------
+# FOR MAC OS users
+# -------------------------------------------------------
+
+```
+brew install r
+
+brew reinstall gcc
+brew install gdal
+brew install libgit2
+brew install udunits
+```
+https://github.com/r-lib/usethis/issues/1970#issuecomment-2471529856
