@@ -1,3 +1,10 @@
+mkdirs <- function(fp) {
+  if (!file.exists(fp)) {
+    mkdirs(dirname(fp))
+    dir.create(fp)
+  }
+}
+
 # Function to extract the area of a raster within each polygon
 raster_area_within_polygons <- function(rst, polygons) {
   # Ensure the raster has the correct CRS
