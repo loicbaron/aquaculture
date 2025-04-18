@@ -22,16 +22,17 @@ install.packages("terra", configure.args = c(
 # -------------------------------------------------------
 
 install.packages(
-  c("dplyr", "exactextractr", "raster", "sf", "terra"),
+  c("dplyr", "exactextractr", "raster"),
   dependencies = TRUE
 )
-install.packages("exactextractr")
+install.packages("tidyverse")
 source("helpers.R")
 library(dplyr)
 library(exactextractr)
 library(raster)
 library(sf)
 library(terra)
+library(tidyverse)
 
 mkdirs("data/LANDSAT_NDWI_binary")
 src_dir <- "data/LANDSAT_NDWI"
@@ -81,3 +82,33 @@ for (f in raster_files) {
 
 st_write(results, "output/results_khulna.gpkg")
 write.csv(results %>% st_drop_geometry(), "output/my_data.csv")
+
+transform_for_location <- function(data) {
+  transformed_data <- data %>%
+    dplyr::select(-c(
+      geo_id, adm1_name, adm2_name, adm3_name, adm4_name, country_iso3, area
+    )) %>%
+    tidyr::pivot_longer(
+      cols = starts_with("aqua_"),
+      names_to = c("variable", "type", "year"),
+      names_sep = "_"
+    ) %>%
+    dplyr::mutate(year = as.integer(year)) %>%
+    dplyr::group_by(year, type) %>%
+    dplyr::reframe(
+      value = if (type[1] == "area") sum(value, na.rm = TRUE) else mean(value, na.rm = TRUE)
+    ) %>%
+    tidyr::pivot_wider(
+      names_from = type,
+      values_from = value
+    ) %>%
+    dplyr::select(year, area, pct)
+  return(transformed_data)
+}
+
+dacope <- results %>%
+  dplyr::filter(adm4_name == "Dacope") %>%
+  transform_for_location()
+khulna <- results %>%
+  dplyr::filter(adm2_name == "Khulna") %>%
+  transform_for_location()
